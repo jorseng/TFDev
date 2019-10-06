@@ -1,0 +1,5 @@
+Terraform Notes:
+
+NSG
+	1. Adding new rule to the NSG will cause it to deassociate from the assigned subnet
+		- Remedy by using 'taint' on association resource or apply twice

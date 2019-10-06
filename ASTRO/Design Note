@@ -1,0 +1,9 @@
+Note
+1. Test out import resource
+
+
+Prod:
+Main.tf
+    - Main resource group  
+    - Main Vnet
+
