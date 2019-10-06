@@ -1,0 +1,5 @@
+# Ignore Folder
+.vs/
+**/.terraform/
+*.vsdx
+*.exe
