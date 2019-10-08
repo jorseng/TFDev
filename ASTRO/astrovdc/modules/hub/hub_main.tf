@@ -16,9 +16,12 @@ resource "azurerm_virtual_network" "vnet" {
 }
 
 resource "azurerm_subnet" "subnets" {
-  count                = length(var.subnets)
-  name                 = element(keys(var.subnets), count.index)
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  resource_group_name  = azurerm_resource_group.rgroup.name
-  address_prefix       = element(values(var.subnets), count.index)
-}
+  count                     = length(var.subnets)
+  name                      = element(keys(var.subnets), count.index)
+  virtual_network_name      = azurerm_virtual_network.vnet.name
+  resource_group_name       = azurerm_resource_group.rgroup.name
+  address_prefix            = element(values(var.subnets), count.index)
+  #network_security_group_id = lookup keys in subnet_for_nsg, if match then assign value
+  network_security_group_id = lookup(var.subnet_nsg, element(keys(var.subnets), count.index),"")
+  }
+

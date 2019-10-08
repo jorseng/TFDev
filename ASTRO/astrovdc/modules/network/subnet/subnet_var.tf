@@ -17,3 +17,7 @@ variable "subnet" {
     address_prefix = "10.1.0.0/24"
   }
 }
+
+variable "nsg_id" {
+  default     = 
+}

@@ -28,11 +28,12 @@ variable "Transit-VNet" {
 }
 
 variable "Transit-Subnets" {
+  description = "The sequence of the "
   default = {
-    "GatewaySubnet"       = "10.1.3.224/27"
-    "AzureFirewallSubnet" = "10.1.0.0/26"
-    "Prod-ExtWAF-Net01"   = "10.1.0.64/26"
-    "Prod-IntWAF-Net01"   = "10.1.0.128/26"
+    "GatewaySubnet"       = "10.1.3.224/27" # Gateway Subnet here
+    "AzureFirewallSubnet" = "10.1.0.0/26"   # Azure Firewall Subnet here
+    "Prod-ExtWAF-Net01"   = "10.1.0.64/26"  # AppGW-Ext Subnet here
+    "Prod-IntWAF-Net01"   = "10.1.0.128/26" # AppGW-Int Subnet here
   }
 }
 
@@ -78,7 +79,7 @@ variable "S2SConnection" {
 }
 
 ##########################################################################
-#   GATEWAY                                                     
+#   EXPRESS ROUTE                                                     
 ##########################################################################
 
 variable "expressRoute" {
@@ -109,12 +110,40 @@ variable "fw_pip" {
 }
 
 
+variable "nat_rule_collection" {
+  default = {
+    # "nat-rule-collection-1" = [1000, "Dnat",
+    #   {"rule1" = [["10.0.0.0/16"], ["53"], ["8.8.8.8", "8.8.4.4"], ["TCP", "UDP"], "10.0.0.1", "80"]
+    #    "rule2" = [["10.0.1.0/16"], ["53"], ["8.8.8.8", "8.8.4.4"], ["TCP", "UDP"], "10.0.0.1", "80"]
+    #   }]
+
+  }
+}
+
+variable "network_rule_collection" {
+  default = {
+    # "network-rule-collection-1" = [1000, "Allow",
+    #   {"rule1" = [["10.0.0.0/16"], ["53"], ["8.8.8.8", "8.8.4.4"], ["TCP", "UDP"]]
+    #    "rule2" = [["10.0.1.0/16"], ["53"], ["8.8.8.8", "8.8.4.4"], ["TCP", "UDP"]]
+    #   }]
+  }
+}
+
+variable "app_rule_collection" {
+  default = {
+    # "app-rule-collection-1" = [1000, "Allow",
+    #   {"rule1" = [["10.0.0.0/16"], ["53"], ["*.google.com"]]
+    #    "rule2" = [["10.0.0.0/16"], ["53"], ["*.google.com"]]
+    #   }]
+  }
+}
+
 ##########################################################################
 #   NETWORK SECURITY GROUP                                                     
 ##########################################################################
 
 variable "Prod-ExtWAF-NSG" {
-  default     = "Prod-ExtWAF-NSG"
+  default = "Prod-ExtWAF-NSG"
 }
 
 # WARNING: ADD/REMOVE RULES WILL DEASSOCIATE NSG FROM ASSIGNED SUBNET
@@ -123,10 +152,10 @@ variable "Prod-ExtWAF-NSG" {
 # NOTE   : Run twice to reassociate the nsg association
 variable "Prod-ExtWAF-NSG-Rules" {
   description = "[priority,direction,access,protocol,source_port_range,destination_port_range,source_address_prefix,destination_address_prefix]"
-  default     = {
-    "rule1" = [1000,"Inbound","Allow","TCP","*","*","*","*"]
-    "rule2" = [1001,"Outbound","Allow","TCP","*","*","*","*"]
-    "rule3" = [1002,"Outbound","Allow","TCP","*","*","*","*"]
+  default = {
+    "rule1" = [1000, "Inbound", "Allow", "TCP", "*", "*", "*", "*"]
+    "rule2" = [1001, "Outbound", "Allow", "TCP", "*", "*", "*", "*"]
+    "rule3" = [1002, "Outbound", "Allow", "TCP", "*", "*", "*", "*"]
   }
 }
 
@@ -135,11 +164,48 @@ variable "Prod-ExtWAF-NSG-Rules" {
 ##########################################################################
 
 variable "route_table_name" {
-  default     = "udr-test-table"
+  default = "udr-test-table"
 }
 
 variable "routes" {
-  default     = {
-      "route1" = ["10.5.2.0/24","VnetLocal"]
+  default = {
+    "route1" = ["10.5.2.0/24", "VnetLocal"]
+  }
+}
+
+
+##########################################################################
+#   APPLICATION GATEWAY                                                     
+##########################################################################
+
+variable "appgw_pip" {
+  default = {
+    name              = "test-appgw-pip"
+    allocation_method = "Dynamic"
+  }
+}
+
+variable "application_gateway_config" {
+  default = {
+    name         = "appgw-test"
+    sku_type     = "Standard_Small"
+    sku_tier     = "Standard"
+    sku_capacity = 2
+    fe_port_name = "feport-name-01" # use the same for the listener
+    fe_port      = 80
+    be_pool = {
+      #"be_pool_name" = ["ip_address"]
+      "be_pool1" = ["10.2.0.0"]
+    }
+    be_http_settings = {
+      #"http_settings1" = ["cookie_affinity", "protocol", "(port)", "(timeout)",["path"]]
+      "http_setting1" = ["Disabled", "Http", 80, 2, ""]
+    }
+    routing_rule = {
+      # be_pool_name must be defined in be_pool
+      # be_settings name must be defined in the be_http_settings
+      #"rule1" = ["type", "be_pool_name", "be_http_settings_name", "listener_name", "listener_protocol"]
+      "rule1" = ["Basic", "listener1", "be_pool1", "http_setting1","Http"]
+    }
   }
 }

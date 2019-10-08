@@ -20,3 +20,7 @@ output "subnets" {
   # "Place all the subnets into zipmap with its corresponding name and id, to call the zipmap, requires lookup
   #  function, lookup(<collection>, <specify the key you are looking for, returns id>, <return this value if false>)"                
 }
+
+output "subnet_list" {
+  value       = azurerm_subnet.subnets
+}

@@ -17,6 +17,6 @@ variable "nsg_rule_set" {
   }
 }
 
-variable "subnet_id" {
-  default     = ""
+variable "subnet_id_list" {
+  default     = [""]
 }

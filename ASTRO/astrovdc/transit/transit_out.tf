@@ -2,9 +2,18 @@ output "transit-vnet-id" {
   value = module.Transit-Hub.vnet.id
 }
 
-output "transit-vnet" {
-  value = module.Transit-Hub.vnet
+# output "transit-vnet" {
+#   value = module.Transit-Hub.vnet
+# }
+
+
+output "transit-subnets" {
+  value = module.Transit-Hub.subnets
 }
+
+# output "subnet" {
+#   value       = lookup(module.Transit-Hub.subnets,"name")
+# }
 
 # output "transit-vpn-gateway" {
 #   value = module.Transit-S2S-VPN.gateway_virtual

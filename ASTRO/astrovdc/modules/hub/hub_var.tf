@@ -21,3 +21,13 @@ variable "subnets" {
     "sec-subnet" = "10.0.4.0/24"
   }
 }
+
+variable "nsg_id" {
+  default     = ""
+}
+
+variable "subnet_nsg" {
+  default     = {
+    "subnet_name" = "nsg_id"
+  }
+}

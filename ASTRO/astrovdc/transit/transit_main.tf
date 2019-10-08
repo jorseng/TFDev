@@ -9,17 +9,43 @@ module "Transit-Hub" {
   resource_group  = var.Transit-Network-RG
   virtual_network = var.Transit-VNet
   subnets         = var.Transit-Subnets
+  # subnet_nsg = {<subnet name> = <nsg id>}
+  subnet_nsg = {
+    "Prod-ExtWAF-Net01" = module.Prod-ExtWAF-NSG.nsg.id,
+    "Prod-IntWAF-Net01" = module.Prod-ExtWAF-NSG.nsg.id
+  }
 }
 
 module "Prod-ExtWAF-NSG" {
-  source  = "../modules/network/nsgSet"
+  source         = "../modules/network/nsgSet"
   resource_group = module.Transit-Hub.resource_group
-  nsg_name = var.Prod-ExtWAF-NSG
-  nsg_rule_set = var.Prod-ExtWAF-NSG-Rules
-  subnet_id = lookup(module.Transit-Hub.subnets, "Prod-ExtWAF-Net01", "")
+  nsg_name       = var.Prod-ExtWAF-NSG
+  nsg_rule_set   = var.Prod-ExtWAF-NSG-Rules
+  # Needs to match with the one assigned in subnet.
+  subnet_id_list = [
+    lookup(module.Transit-Hub.subnets, "Prod-ExtWAF-Net01", ""),
+    lookup(module.Transit-Hub.subnets, "Prod-ExtWAF-Net01", "")
+  ]
 }
 
+module "appgw" {
+  source          = "../modules/network/appGateway"
+  resource_group  = module.Transit-Hub.resource_group
+  appgw_subnet_id = lookup(module.Transit-Hub.subnets, "Prod-ExtWAF-Net01", "")
+  appgw_pip = var.appgw_pip
+  application_gateway_config = var.application_gateway_config
+}
 
+# module "Transit-FW01" {
+#   source                  = "../modules/network/firewall"
+#   resource_group          = module.Transit-Hub.resource_group
+#   fw_pip                  = var.fw_pip
+#   firewall_name           = var.firewall_name
+#   subnet_id               = lookup(module.Transit-Hub.subnets, "AzureFirewallSubnet", "")
+#   nat_rule_collection     = var.nat_rule_collection
+#   network_rule_collection = var.network_rule_collection
+#   app_rule_collection     = var.app_rule_collection
+# }
 
 # module "Transit-S2S-VPN" {
 #   source          = "../modules/network/s2svpn"
@@ -35,14 +61,6 @@ module "Prod-ExtWAF-NSG" {
 #   source         = "../modules/network/expressRoute"
 #   resource_group = module.Transit-Hub.resource_group
 #   express_route  = var.expressRoute
-# }
-
-# module "Transit-FW01" {
-#   source         = "../modules/network/firewall"
-#   resource_group = module.Transit-Hub.resource_group
-#   firewall_name  = var.firewall_name
-#   fw_pip         = var.fw_pip
-#   subnet_id      = lookup(module.Transit-Hub.subnets, "AzureFirewallSubnet", "")
 # }
 
 
