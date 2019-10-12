@@ -39,7 +39,7 @@ variable "Transit-Subnets" {
 
 
 ##########################################################################
-#   GATEWAY                                                     
+#   VIRTUAL GATEWAY                                                     
 ##########################################################################
 
 variable "Transit-VPN-GW01" {
@@ -146,11 +146,20 @@ variable "Prod-ExtWAF-NSG" {
   default = "Prod-ExtWAF-NSG"
 }
 
-# WARNING: ADD/REMOVE RULES WILL DEASSOCIATE NSG FROM ASSIGNED SUBNET
-# NOTE   : Taint the nsg association resource to recreate the association
-# OR
-# NOTE   : Run twice to reassociate the nsg association
 variable "Prod-ExtWAF-NSG-Rules" {
+  description = "[priority,direction,access,protocol,source_port_range,destination_port_range,source_address_prefix,destination_address_prefix]"
+  default = {
+    "rule1" = [1000, "Inbound", "Allow", "TCP", "*", "*", "*", "*"]
+    "rule2" = [1001, "Outbound", "Allow", "TCP", "*", "*", "*", "*"]
+    "rule3" = [1002, "Outbound", "Allow", "TCP", "*", "*", "*", "*"]
+  }
+}
+
+variable "Prod-IntWAF-NSG" {
+  default = "Prod-IntWAF-NSG"
+}
+
+variable "Prod-IntWAF-NSG-Rules" {
   description = "[priority,direction,access,protocol,source_port_range,destination_port_range,source_address_prefix,destination_address_prefix]"
   default = {
     "rule1" = [1000, "Inbound", "Allow", "TCP", "*", "*", "*", "*"]
@@ -199,13 +208,13 @@ variable "application_gateway_config" {
     }
     be_http_settings = {
       #"http_settings1" = ["cookie_affinity", "protocol", "(port)", "(timeout)",["path"]]
-      "http_setting1" = ["Disabled", "Http", 80, 2, ""]
+      "be_http_setting1" = ["Disabled", "Http", 80, 2, ""]
     }
     routing_rule = {
       # be_pool_name must be defined in be_pool
       # be_settings name must be defined in the be_http_settings
       #"rule1" = ["type", "be_pool_name", "be_http_settings_name", "listener_name", "listener_protocol"]
-      "rule1" = ["Basic", "listener1", "be_pool1", "http_setting1","Http"]
+      "rule1" = ["Basic", "be_pool1", "be_http_setting1", "listener1", "Http"]
     }
   }
 }

@@ -20,7 +20,7 @@ resource "azurerm_network_security_rule" "nsgRuleSet" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "nsgAssociation" {
-  count = length (var.subnet_id_list)
+  count                     = length (var.subnet_id_list)
   subnet_id                 = var.subnet_id_list[count.index]
   network_security_group_id = azurerm_network_security_group.nsg.id
 }

@@ -31,7 +31,6 @@ resource "azurerm_application_gateway" "appgw" {
 
   frontend_ip_configuration {
     name = "${var.application_gateway_config.fe_port_name}-Ip-Config"
-    # does this auto create ip?
     public_ip_address_id = azurerm_public_ip.appgwPip.id
   }
 

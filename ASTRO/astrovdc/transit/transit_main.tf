@@ -1,3 +1,10 @@
+locals {
+  GatewaySubnet  = lookup(module.Transit-Hub.subnets, "GatewaySubnet", "")
+  FirewallSubnet = lookup(module.Transit-Hub.subnets, "AzureFirewallSubnet", "")
+  ExtWAFSubnet   = lookup(module.Transit-Hub.subnets, "Prod-ExtWAF-Net01", "")
+  IntWAFSubnet   = lookup(module.Transit-Hub.subnets, "Prod-IntWAF-Net01", "") 
+}
+
 # Shared Resources
 provider "azurerm" {
   version         = "1.34.0"
@@ -11,8 +18,8 @@ module "Transit-Hub" {
   subnets         = var.Transit-Subnets
   # subnet_nsg = {<subnet name> = <nsg id>}
   subnet_nsg = {
-    "Prod-ExtWAF-Net01" = module.Prod-ExtWAF-NSG.nsg.id,
-    "Prod-IntWAF-Net01" = module.Prod-ExtWAF-NSG.nsg.id
+    "${local.ExtWAFSubnet}" = module.Prod-ExtWAF-NSG.nsg.id,
+    "${local.IntWAFSubnet}" = module.Prod-IntWAF-NSG.nsg.id
   }
 }
 
@@ -23,18 +30,28 @@ module "Prod-ExtWAF-NSG" {
   nsg_rule_set   = var.Prod-ExtWAF-NSG-Rules
   # Needs to match with the one assigned in subnet.
   subnet_id_list = [
-    lookup(module.Transit-Hub.subnets, "Prod-ExtWAF-Net01", ""),
-    lookup(module.Transit-Hub.subnets, "Prod-ExtWAF-Net01", "")
+    lookup(module.Transit-Hub.subnets, local.ExtWAFSubnet, "")
   ]
 }
 
-module "appgw" {
-  source          = "../modules/network/appGateway"
-  resource_group  = module.Transit-Hub.resource_group
-  appgw_subnet_id = lookup(module.Transit-Hub.subnets, "Prod-ExtWAF-Net01", "")
-  appgw_pip = var.appgw_pip
-  application_gateway_config = var.application_gateway_config
+module "Prod-IntWAF-NSG" {
+  source         = "../modules/network/nsgSet"
+  resource_group = module.Transit-Hub.resource_group
+  nsg_name       = var.Prod-IntWAF-NSG
+  nsg_rule_set   = var.Prod-IntWAF-NSG-Rules
+  # Needs to match with the one assigned in subnet.
+  subnet_id_list = [
+    lookup(module.Transit-Hub.subnets, local.IntWAFSubnet, "")
+  ]
 }
+
+# module "appgw" {
+#   source                     = "../modules/network/appGateway"
+#   resource_group             = module.Transit-Hub.resource_group
+#   appgw_subnet_id            = lookup(module.Transit-Hub.subnets, local.ExtWAFSubnet, "")
+#   appgw_pip                  = var.appgw_pip
+#   application_gateway_config = var.application_gateway_config
+# }
 
 # module "Transit-FW01" {
 #   source                  = "../modules/network/firewall"
