@@ -9,16 +9,12 @@ variable "virtual_machine" {
     admin_password     = "jspassword90"
     domain_name_label  = "jsvmtest" 
     vm_size            = "Standard_DS2_v3"
-    managed_disk_type  = "StandardSSD_LRS"
+    os_disk_type       = "StandardSSD_LRS"
     vnet_address_space = ["10.0.0.0/16"]
     subnet_cidr        = "10.0.1.0/24"
-  }
-}
-
-variable "new_data_disk" {
-  default = {
-    #"lun" = ["managed_disk_type", "disk_size_gb"]
-    "0" = ["Standard_LRS", "64"]
+    new_data_disk      = {
+      "0" = ["Standard_LRS", "64"]
+    }
   }
 }
 

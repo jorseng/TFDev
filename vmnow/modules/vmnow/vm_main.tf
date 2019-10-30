@@ -73,12 +73,12 @@ resource "azurerm_virtual_machine" "vm" {
     name              = "${var.virtual_machine.prefix}-test-os-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = var.virtual_machine.managed_disk_type
+    managed_disk_type = var.virtual_machine.os_disk_type
   }
 
   # Optional data disks
   dynamic "storage_data_disk" {
-    for_each = var.new_data_disk
+    for_each = var.virtual_machine.new_data_disk
     content {
       name              = "${var.virtual_machine.prefix}-test-data-disk-${storage_data_disk.key}"
       managed_disk_type = storage_data_disk.value[0]
