@@ -1,0 +1,142 @@
+{
+  "version": 4,
+  "terraform_version": "0.12.11",
+  "serial": 17,
+  "lineage": "c4909556-1bcc-4f8d-f673-45470e59cf89",
+  "outputs": {},
+  "resources": [
+    {
+      "mode": "data",
+      "type": "terraform_remote_state",
+      "name": "Hub-Ref",
+      "provider": "provider.terraform",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "backend": "local",
+            "config": {
+              "value": {
+                "path": "../hub/terraform.tfstate"
+              },
+              "type": [
+                "object",
+                {
+                  "path": "string"
+                }
+              ]
+            },
+            "defaults": null,
+            "outputs": {
+              "value": {
+                "Hub-Subnets": {
+                  "AzureBastionSubnet": "/subscriptions/13ef02a6-7352-4c93-834e-b739a3a65a0b/resourceGroups/Hub-Network-RG/providers/Microsoft.Network/virtualNetworks/Hub-VNet/subnets/AzureBastionSubnet",
+                  "AzureFirewallSubnet": "/subscriptions/13ef02a6-7352-4c93-834e-b739a3a65a0b/resourceGroups/Hub-Network-RG/providers/Microsoft.Network/virtualNetworks/Hub-VNet/subnets/AzureFirewallSubnet",
+                  "GatewaySubnet": "/subscriptions/13ef02a6-7352-4c93-834e-b739a3a65a0b/resourceGroups/Hub-Network-RG/providers/Microsoft.Network/virtualNetworks/Hub-VNet/subnets/GatewaySubnet",
+                  "Hub-ExtWAF-Net01": "/subscriptions/13ef02a6-7352-4c93-834e-b739a3a65a0b/resourceGroups/Hub-Network-RG/providers/Microsoft.Network/virtualNetworks/Hub-VNet/subnets/Hub-ExtWAF-Net01",
+                  "Hub-IntWAF-Net01": "/subscriptions/13ef02a6-7352-4c93-834e-b739a3a65a0b/resourceGroups/Hub-Network-RG/providers/Microsoft.Network/virtualNetworks/Hub-VNet/subnets/Hub-IntWAF-Net01",
+                  "Hub-Net01": "/subscriptions/13ef02a6-7352-4c93-834e-b739a3a65a0b/resourceGroups/Hub-Network-RG/providers/Microsoft.Network/virtualNetworks/Hub-VNet/subnets/Hub-Net01"
+                },
+                "Hub-Vnet": {
+                  "address_space": [
+                    "10.3.0.0/22"
+                  ],
+                  "id": "/subscriptions/13ef02a6-7352-4c93-834e-b739a3a65a0b/resourceGroups/Hub-Network-RG/providers/Microsoft.Network/virtualNetworks/Hub-VNet",
+                  "name": "Hub-VNet",
+                  "resource_group_name": "Hub-Network-RG"
+                },
+                "Hub-Vnet-Id": "/subscriptions/13ef02a6-7352-4c93-834e-b739a3a65a0b/resourceGroups/Hub-Network-RG/providers/Microsoft.Network/virtualNetworks/Hub-VNet"
+              },
+              "type": [
+                "object",
+                {
+                  "Hub-Subnets": [
+                    "object",
+                    {
+                      "AzureBastionSubnet": "string",
+                      "AzureFirewallSubnet": "string",
+                      "GatewaySubnet": "string",
+                      "Hub-ExtWAF-Net01": "string",
+                      "Hub-IntWAF-Net01": "string",
+                      "Hub-Net01": "string"
+                    }
+                  ],
+                  "Hub-Vnet": [
+                    "object",
+                    {
+                      "address_space": [
+                        "list",
+                        "string"
+                      ],
+                      "id": "string",
+                      "name": "string",
+                      "resource_group_name": "string"
+                    }
+                  ],
+                  "Hub-Vnet-Id": "string"
+                }
+              ]
+            },
+            "workspace": "default"
+          }
+        }
+      ]
+    },
+    {
+      "module": "module.Prod-VNet-Spoke",
+      "mode": "managed",
+      "type": "azurerm_subnet",
+      "name": "subnets",
+      "each": "list",
+      "provider": "provider.azurerm",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 0,
+          "attributes": {
+            "address_prefix": "10.1.0.0/27",
+            "delegation": [],
+            "id": "/subscriptions/27a828db-53fb-4f4e-a46b-3fc8332e59dd/resourceGroups/Prod-Network-RG/providers/Microsoft.Network/virtualNetworks/Prod-VNet/subnets/AzureBastionSubnet",
+            "ip_configurations": [],
+            "name": "AzureBastionSubnet",
+            "network_security_group_id": "",
+            "resource_group_name": "Prod-Network-RG",
+            "route_table_id": "",
+            "service_endpoints": null,
+            "virtual_network_name": "Prod-VNet"
+          },
+          "private": "bnVsbA==",
+          "depends_on": [
+            "azurerm_virtual_network.vnet"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.Prod-VNet-Spoke",
+      "mode": "managed",
+      "type": "azurerm_virtual_network",
+      "name": "vnet",
+      "provider": "provider.azurerm",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "address_space": [
+              "10.1.0.0/16"
+            ],
+            "ddos_protection_plan": [],
+            "dns_servers": null,
+            "id": "/subscriptions/27a828db-53fb-4f4e-a46b-3fc8332e59dd/resourceGroups/Prod-Network-RG/providers/Microsoft.Network/virtualNetworks/Prod-VNet",
+            "location": "southeastasia",
+            "name": "Prod-VNet",
+            "resource_group_name": "Prod-Network-RG",
+            "subnet": [],
+            "tags": {}
+          },
+          "private": "bnVsbA=="
+        }
+      ]
+    }
+  ]
+}
