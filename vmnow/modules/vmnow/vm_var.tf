@@ -7,6 +7,7 @@ variable "virtual_machine" {
     prefix             = "vm" # lowercase letters only, for storage account naming
     admin_username     = "jorseng"
     admin_password     = "jspassword90"
+    domain_name_label  = "jsvmtest" 
     vm_size            = "Standard_DS2_v3"
     managed_disk_type  = "StandardSSD_LRS"
     vnet_address_space = ["10.0.0.0/16"]
