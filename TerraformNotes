@@ -1,5 +1,62 @@
 Terraform Notes:
 
-NSG
-	1. Adding new rule to the NSG will cause it to deassociate from the assigned subnet
-		- Remedy by using 'taint' on association resource or apply twice
+Import State
+
+terraform import module.Hub-ER-GW01.azurerm_virtual_network_gateway.gatewayVirtual /subscriptions/13ef02a6-7352-4c93-834e-b739a3a65a0b/resourceGroups/Hub-Network-RG/providers/Microsoft.Network/virtualNetworkGateways/Hub-ER-GW01
+
+
+Move State
+terraform state mv module.Prod-ER-GW01.azurerm_public_ip.gwpip module.Hub-ER-GW01.azurerm_public_ip.gwpip
+
+Remove State
+terraform state rm module.Prod-ER-GW01.azurerm_public_ip.gwpip
+
+
+
+NOTE:
+	1. Figure out a way to prevent refresh token failure
+	2. 
+
+ASTRO
+azure portal object id = f04f6688-4245-4bd0-bcd7-b76082856932
+Azure portal policy id = afe30e63-a3da-4902-9d93-81bdb9403297
+
+
+
+
+# Azure CLI commands 
+AAD Policy Assignment
+	1. Connnect to AAD
+		Connect-AzureAD -Confirm
+
+	2. Get the list of service principal to get the object ID
+		Get-AzureAdServicePrincipal
+
+	3. Create Policy
+		New-AzureADPolicy -Definition @('{"TokenLifetimePolicy":{"Version":1,"AccessTokenLifetime":"03:00:00"}}') -DisplayName "AccessTokenLifeTime" -IsOrganizationDefault $false -Type "TokenLifetimePolicy"
+
+	4. Assign Policy to Service Principal
+		# Add-AzureADServicePrincipalPolicy -Id <Service_Principal_Object_ID> -RefObjectID <Policy_ID>
+		Add-AzureADServicePrincipalPolicy -Id 40e5081d-c21a-42b9-b008-17b725a2be77 -RefObjectId ba9481f5-bac7-4bfe-b499-b838c6763f4c
+
+	5. Remove policy when done
+		Remove-AzureADServicePrincipalPolicy -Id 40e5081d-c21a-42b9-b008-17b725a2be77 -Policyid ba9481f5-bac7-4bfe-b499-b838c6763f4c
+
+	6. Find Service Principal
+		# FOR ACCESS TOKEN LIFETIME, NEED TO APPLY TO "Windows Azure Service Management API"
+		Get-AzureADServicePrincipal -All $true | Where-Object {$_.DisplayName -eq "Windows Azure Service Management API"}
+
+
+
+Get token
+
+az account get-access-token
+
+
+Enfrasys App password?
+jtnwcrvdcjjwgpfq
+
+
+https://github.com/terraform-providers/terraform-provider-azurerm/issues/502
+
+https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-configurable-token-lifetimes
