@@ -5,8 +5,9 @@ variable "location" {
 variable "virtual_machine" {
   default = {
     prefix             = "vm" # lowercase letters only, for storage account naming
+    count              = 1
     admin_username     = "jorseng"
-    admin_password     = "jspassword90"
+    admin_password     = "jspassword9@"
     domain_name_label  = "jsvmtest" 
     vm_size            = "Standard_DS2_v3"
     os_disk_type       = "StandardSSD_LRS"
