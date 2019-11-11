@@ -3,7 +3,7 @@ module "vm1" {
   virtual_machine = var.vm1
 }
 
-module "tfs" {
-  source  = "./modules/vmnow2"
-  vmset   = var.tfs
-}
+# module "tfs" {
+#   source  = "./modules/vmnow2"
+#   vmset   = var.tfs
+# }
